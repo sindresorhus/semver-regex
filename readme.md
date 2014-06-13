@@ -23,6 +23,9 @@ semverRegex().test('1.2.3-alpha.10.beta.0+build.unicorn.rainbow');
 
 semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 //=> 1.0.0
+
+'unicorn 1.0.0 and rainbow 2.1.3'.match(semverRegex());
+//=> ['1.0.0', '2.1.3']
 ```
 
 
