@@ -22,4 +22,7 @@ it('should match semver versions', function () {
 	});
 
 	assert(!semverRegex().test('0.88'));
+	assert(!semverRegex().test('1.0.08'));
+	assert(!semverRegex().test('1.08.0'));
+	assert(!semverRegex().test('01.8.0'));
 });
