@@ -28,8 +28,6 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 //=> ['1.0.0', '2.1.3']
 ```
 
-*It's a function so you can create multiple instances. Regexes with the global flag will have the `.lastIndex` property changed for each call to methods on the instance. Therefore reusing the instance with multiple calls will not work as expected for `.test()`.*
-
 
 ## License
 
