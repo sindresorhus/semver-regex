@@ -29,6 +29,11 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 ```
 
 
+## Related
+
+- [find-versions](https://github.com/sindresorhus/find-versions) - Find semver versions in a string
+
+
 ## License
 
 MIT © [Sindre Sorhus](http://sindresorhus.com)
