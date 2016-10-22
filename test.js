@@ -16,7 +16,7 @@ var fixture = [
 	'foo 0.0.0 bar 0.0.0'
 ];
 
-it('should match semver versions', function () {
+it('should match semver versions on test', function () {
 	fixture.forEach(function (el) {
 		assert(semverRegex().test(el), el);
 	});
@@ -25,4 +25,14 @@ it('should match semver versions', function () {
 	assert(!semverRegex().test('1.0.08'));
 	assert(!semverRegex().test('1.08.0'));
 	assert(!semverRegex().test('01.8.0'));
+});
+
+it('should return semver on match', function () {
+	assert.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
+	assert.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
+});
+
+// See: https://github.com/sindresorhus/semver-regex/issues/7
+it.skip('should not return tag prefix', function () {
+	assert.deepEqual('v0.0.0'.match(semverRegex()), ['0.0.0'])
 });
