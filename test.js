@@ -1,8 +1,7 @@
-'use strict';
-var assert = require('assert');
-var semverRegex = require('./');
+import test from 'ava';
+import m from '.';
 
-var fixture = [
+const fixture = [
 	'0.0.0',
 	'0.10.0',
 	'v1.0.0',
@@ -16,23 +15,23 @@ var fixture = [
 	'foo 0.0.0 bar 0.0.0'
 ];
 
-it('should match semver versions on test', function () {
-	fixture.forEach(function (el) {
-		assert(semverRegex().test(el), el);
-	});
+test('matches semver versions on test', t => {
+	for (const el of fixture) {
+		t.regex(el, m());
+	}
 
-	assert(!semverRegex().test('0.88'));
-	assert(!semverRegex().test('1.0.08'));
-	assert(!semverRegex().test('1.08.0'));
-	assert(!semverRegex().test('01.8.0'));
+	t.notRegex('0.88', m());
+	t.notRegex('1.0.08', m());
+	t.notRegex('1.08.0', m());
+	t.notRegex('01.8.0', m());
 });
 
-it('should return semver on match', function () {
-	assert.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
-	assert.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
+test('returns semver on match', t => {
+	t.deepEqual('0.0.0'.match(m()), ['0.0.0']);
+	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(m()), ['0.0.0', '0.1.1']);
 });
 
 // See: https://github.com/sindresorhus/semver-regex/issues/7
-it.skip('should not return tag prefix', function () {
-	assert.deepEqual('v0.0.0'.match(semverRegex()), ['0.0.0'])
+test.failing('doesn not return tag prefix', t => {
+	t.deepEqual('v0.0.0'.match(m()), ['0.0.0']);
 });

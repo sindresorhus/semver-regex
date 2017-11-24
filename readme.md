@@ -6,7 +6,7 @@
 ## Install
 
 ```
-$ npm install --save semver-regex
+$ npm install semver-regex
 ```
 
 
