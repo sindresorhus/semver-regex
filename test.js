@@ -31,8 +31,7 @@ test('returns semver on match', t => {
 	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(m()), ['0.0.0', '0.1.1']);
 });
 
-// See #7
-test.failing('does not return tag prefix', t => {
+test('#7, does not return tag prefix', t => {
 	t.deepEqual('v0.0.0'.match(m()), ['0.0.0']);
 });
 
