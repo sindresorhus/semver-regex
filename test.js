@@ -1,7 +1,7 @@
 import test from 'ava';
-import m from '.';
+import semverRegex from '.';
 
-const fixture = [
+const fixtures = [
 	'0.0.0',
 	'0.10.0',
 	'v1.0.0',
@@ -16,26 +16,26 @@ const fixture = [
 ];
 
 test('matches semver versions on test', t => {
-	for (const el of fixture) {
-		t.regex(el, m());
+	for (const fixture of fixtures) {
+		t.regex(fixture, semverRegex());
 	}
 
-	t.notRegex('0.88', m());
-	t.notRegex('1.0.08', m());
-	t.notRegex('1.08.0', m());
-	t.notRegex('01.8.0', m());
+	t.notRegex('0.88', semverRegex());
+	t.notRegex('1.0.08', semverRegex());
+	t.notRegex('1.08.0', semverRegex());
+	t.notRegex('01.8.0', semverRegex());
 });
 
 test('returns semver on match', t => {
-	t.deepEqual('0.0.0'.match(m()), ['0.0.0']);
-	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(m()), ['0.0.0', '0.1.1']);
+	t.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
+	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
 });
 
 test('#7, does not return tag prefix', t => {
-	t.deepEqual('v0.0.0'.match(m()), ['0.0.0']);
+	t.deepEqual('v0.0.0'.match(semverRegex()), ['0.0.0']);
 });
 
-test('#14, does not match substrings of longer semver-similar strings, respect semver2.0.0 clause 9', t => {
+test('#14, does not match sub-strings of longer semver-similar strings, respect semver@2.0.0 clause 9', t => {
 	const invalidStrings = [
 		'1',
 		'1.2',
@@ -80,6 +80,6 @@ test('#14, does not match substrings of longer semver-similar strings, respect s
 	];
 
 	for (const string of invalidStrings) {
-		t.notRegex(string, m());
+		t.notRegex(string, semverRegex());
 	}
 });
