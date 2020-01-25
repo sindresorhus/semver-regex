@@ -83,3 +83,16 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 		t.notRegex(string, semverRegex());
 	}
 });
+
+test('#18, allow 0 as numeric identifier', t => {
+	for (const string of [
+		'0.2.3-alpha.10.beta+build.unicorn.rainbow',
+		'1.0.3-alpha.10.beta+build.unicorn.rainbow',
+		'1.2.0-alpha.10.beta+build.unicorn.rainbow',
+		'1.2.3-0.10.beta+build.unicorn.rainbow',
+		'1.2.3-alpha.0.beta+build.unicorn.rainbow',
+		'1.2.3-alpha.10.0+build.unicorn.rainbow'
+	]) {
+		t.regex(string, semverRegex());
+	}
+});
