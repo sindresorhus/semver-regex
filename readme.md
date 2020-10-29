@@ -1,14 +1,12 @@
-# semver-regex [![Build Status](https://travis-ci.org/sindresorhus/semver-regex.svg?branch=master)](https://travis-ci.org/sindresorhus/semver-regex)
+# semver-regex [![Build Status](https://travis-ci.com/sindresorhus/semver-regex.svg?branch=master)](https://travis-ci.com/github/sindresorhus/semver-regex)
 
 > Regular expression for matching [semver](https://github.com/npm/node-semver) versions
-
 
 ## Install
 
 ```
 $ npm install semver-regex
 ```
-
 
 ## Usage
 
@@ -28,7 +26,6 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 //=> ['1.0.0', '2.1.3']
 ```
 
-
 ## Related
 
 - [find-versions](https://github.com/sindresorhus/find-versions) - Find semver versions in a string
@@ -36,8 +33,3 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 - [to-semver](https://github.com/sindresorhus/to-semver) - Get an array of valid, sorted, and cleaned semver versions from an array of strings
 - [semver-diff](https://github.com/sindresorhus/semver-diff) - Get the diff type of two semver versions: `0.0.1` `0.0.2` → `patch`
 - [semver-truncate](https://github.com/sindresorhus/semver-truncate) - Truncate a semver version: `1.2.3` → `1.2.0`
-
-
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)
