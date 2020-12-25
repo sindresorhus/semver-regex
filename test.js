@@ -74,7 +74,7 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 		// '1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788',
 		'1.2-RC-SNAPSHOT',
 		'-1.0.3-gamma+b7718',
-		'+justmeta',
+		'+justmeta'
 		// '9.8.7+meta+meta',
 		// '9.8.7-whatever+meta+meta',
 		// '99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12'
