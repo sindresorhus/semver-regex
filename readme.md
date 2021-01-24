@@ -1,4 +1,4 @@
-# semver-regex [![Build Status](https://travis-ci.com/sindresorhus/semver-regex.svg?branch=master)](https://travis-ci.com/github/sindresorhus/semver-regex)
+# semver-regex
 
 > Regular expression for matching [semver](https://github.com/npm/node-semver) versions
 
