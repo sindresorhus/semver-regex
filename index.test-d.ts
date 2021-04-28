@@ -1,4 +1,4 @@
 import {expectType} from 'tsd';
-import semverRegex = require('.');
+import semverRegex from './index.js';
 
 expectType<RegExp>(semverRegex());

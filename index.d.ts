@@ -3,7 +3,7 @@ Regular expression for matching [semver](https://github.com/npm/node-semver) ver
 
 @example
 ```
-import semverRegex = require('semver-regex');
+import semverRegex from 'semver-regex';
 
 semverRegex().test('v1.0.0');
 //=> true
@@ -18,6 +18,4 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 //=> ['1.0.0', '2.1.3']
 ```
 */
-declare function semverRegex(): RegExp;
-
-export = semverRegex;
+export default function semverRegex(): RegExp;

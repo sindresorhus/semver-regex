@@ -11,7 +11,7 @@ $ npm install semver-regex
 ## Usage
 
 ```js
-const semverRegex = require('semver-regex');
+import semverRegex from 'semver-regex';
 
 semverRegex().test('v1.0.0');
 //=> true

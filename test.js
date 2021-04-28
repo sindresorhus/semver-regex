@@ -1,5 +1,5 @@
 import test from 'ava';
-import semverRegex from '.';
+import semverRegex from './index.js';
 
 const fixtures = [
 	'0.0.0',
