@@ -12,7 +12,8 @@ const fixtures = [
 	'2.7.2-foo+bar',
 	'1.2.3-alpha.10.beta',
 	'1.2.3-alpha.10.beta+build.unicorn.rainbow',
-	'foo 0.0.0 bar 0.0.0'
+	'foo 0.0.0 bar 0.0.0',
+	'99999.99999.99999'
 ];
 
 test('matches semver versions on test', t => {
@@ -110,4 +111,12 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		`v1.1.3-0aa${postfix}$`,
 		semverRegex()
 	);
+
+	for (let index = 1; index <= 50000; index++) {
+		const start = Date.now();
+		const fixture = `0.0.0-0${'.-------'.repeat(index)}@`;
+		semverRegex().test(fixture);
+		const difference = Date.now() - start;
+		t.true(difference < 10, `Execution time: ${difference}`);
+	}
 });
