@@ -37,7 +37,7 @@ test('returns semver on match', t => {
 	t.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
 	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
 	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
-	t.deepEqual('0.0.0-foo-bar alpha.beta.1 1.2.3-4'.match(semverRegex()), ['0.0.0-foo-bar', '1.2.3-4']);
+	t.deepEqual('0.0.0-foo-bar alpha.beta.1 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788 1.2.3-4'.match(semverRegex()), ['0.0.0-foo-bar', '1.2.3-4']);
 });
 
 test('#7, does not return tag prefix', t => {
