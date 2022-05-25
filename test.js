@@ -1,5 +1,5 @@
 import test from 'ava';
-import semverRegex from './index.js';
+import semverRegex, {SEMVER_REGEX} from './index.js';
 import semver from 'semver';
 
 const fixtures = [
@@ -172,3 +172,9 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		t.true(difference < 20, `Execution time: ${difference}`);
 	}
 });
+
+test('SEMVER_REGEX const is exported', t => {
+	t.regex('0.0.0', SEMVER_REGEX);
+	t.is(semverRegex().toString(), SEMVER_REGEX.toString());
+});
+
