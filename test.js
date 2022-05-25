@@ -1,6 +1,6 @@
 import test from 'ava';
 import semverRegex from './index.js';
-import semver from 'semver'
+import semver from 'semver';
 
 const fixtures = [
 	'0.0.0',
@@ -20,7 +20,7 @@ const fixtures = [
 test('matches semver versions on test', t => {
 	for (const fixture of fixtures) {
 		t.regex(fixture, semverRegex());
-		t.true(semver.valid(fixture) !== null, fixture);
+		t.true(semver.valid(fixture) !== null);
 
 		if (!fixture.startsWith('v')) { // Should we trim v prefix?
 			t.deepEqual(fixture.match(semverRegex()), [fixture]);
@@ -91,7 +91,7 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 
 	for (const string of invalidStrings) {
 		t.notRegex(string, semverRegex());
-		t.true(semver.valid(string) === null)
+		t.true(semver.valid(string) === null);
 	}
 });
 
@@ -105,7 +105,7 @@ test('#18, allow 0 as numeric identifier', t => {
 		'1.2.3-alpha.10.0+build.unicorn.rainbow'
 	]) {
 		t.regex(string, semverRegex());
-		t.true(semver.valid(string) !== null)
+		t.true(semver.valid(string) !== null);
 	}
 });
 
