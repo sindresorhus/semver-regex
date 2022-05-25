@@ -1,6 +1,6 @@
 import test from 'ava';
-import semverRegex, {SEMVER_REGEX} from './index.js';
 import semver from 'semver';
+import semverRegex, {SEMVER_REGEX} from './index.js';
 
 const fixtures = [
 	'0.0.0',
@@ -48,7 +48,7 @@ const fixtures = [
 	'1.2.3----RC-SNAPSHOT.12.9.1--.12',
 	'1.0.0+0.build.1-rc.10000aaa-kk-0.1',
 	// '99999999999999999999999.999999999999999999.99999999999999999', // Too long
-	'1.0.0-0A.is.legal'
+	'1.0.0-0A.is.legal',
 ];
 
 test('matches semver versions on test', t => {
@@ -120,7 +120,7 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 		'9.8.7+meta+meta',
 		'9.8.7-whatever+meta+meta',
 		'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12',
-		'1.0.0-beta@beta'
+		'1.0.0-beta@beta',
 	];
 
 	for (const string of invalidStrings) {
@@ -136,7 +136,7 @@ test('#18, allow 0 as numeric identifier', t => {
 		'1.2.0-alpha.10.beta+build.unicorn.rainbow',
 		'1.2.3-0.10.beta+build.unicorn.rainbow',
 		'1.2.3-alpha.0.beta+build.unicorn.rainbow',
-		'1.2.3-alpha.10.0+build.unicorn.rainbow'
+		'1.2.3-alpha.10.0+build.unicorn.rainbow',
 	]) {
 		t.regex(string, semverRegex());
 		t.true(semver.valid(string) !== null);
@@ -147,16 +147,16 @@ test('#18, allow 0 as numeric identifier', t => {
 test('invalid version does not cause catatrophic backtracking', t => {
 	t.regex(
 		'v1.1.3-0aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$',
-		semverRegex()
+		semverRegex(),
 	);
 
-	const postfix = '.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'.repeat(99999);
+	const postfix = '.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'.repeat(99_999);
 	t.regex(
 		`v1.1.3-0aa${postfix}$`,
-		semverRegex()
+		semverRegex(),
 	);
 
-	for (let index = 1; index <= 50000; index++) {
+	for (let index = 1; index <= 50_000; index++) {
 		const start = Date.now();
 		const fixture = `0.0.0-0${'.-------'.repeat(index)}@`;
 		semverRegex().test(fixture);
