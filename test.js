@@ -45,7 +45,6 @@ test('#7, does not return tag prefix', t => {
 });
 
 test('#14, does not match sub-strings of longer semver-similar strings, respect semver@2.0.0 clause 9', t => {
-	// TODO: Some of these are disabled as we need to improve the regex.
 	const invalidStrings = [
 		'1',
 		'1.2',
