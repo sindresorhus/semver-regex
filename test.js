@@ -69,7 +69,7 @@ test('matches semver versions on test', t => {
 
 test('returns semver on match', t => {
 	t.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
-	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
+	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
 	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
 	t.deepEqual('0.0.0-foo-bar alpha.beta.1 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788 1.2.3-4'.match(semverRegex()), ['0.0.0-foo-bar', '1.2.3-4']);
 });
