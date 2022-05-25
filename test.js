@@ -1,24 +1,31 @@
 import test from 'ava';
 import semverRegex from './index.js';
+import semver from 'semver'
 
 const fixtures = [
 	'0.0.0',
 	'0.10.0',
 	'v1.0.0',
 	'0.0.0-foo',
+	'0.0.0-foo-bar-baz',
 	'1.2.3-4',
 	'2.7.2+asdf',
 	'1.2.3-a.b.c.10.d.5',
 	'2.7.2-foo+bar',
 	'1.2.3-alpha.10.beta',
 	'1.2.3-alpha.10.beta+build.unicorn.rainbow',
-	'foo 0.0.0 bar 0.0.0',
+	// 'foo 0.0.0 bar 0.0.0',
 	'99999.99999.99999'
 ];
 
 test('matches semver versions on test', t => {
 	for (const fixture of fixtures) {
 		t.regex(fixture, semverRegex());
+		t.true(semver.valid(fixture) !== null, fixture);
+
+		if (!fixture.startsWith('v')) { // Should we trim v previx?
+			t.deepEqual(fixture.match(semverRegex()), [fixture]);
+		}
 	}
 
 	t.notRegex('0.88', semverRegex());
@@ -29,6 +36,7 @@ test('matches semver versions on test', t => {
 
 test('returns semver on match', t => {
 	t.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
+	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
 	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
 });
 
@@ -41,9 +49,9 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 	const invalidStrings = [
 		'1',
 		'1.2',
-		// '1.2.3-0123',
-		// '1.2.3-0123.0123',
-		// '1.1.2+.123',
+		'1.2.3-0123',
+		'1.2.3-0123.0123',
+		'1.1.2+.123',
 		'+invalid',
 		'-invalid',
 		'-invalid+invalid',
@@ -59,13 +67,13 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 		'beta',
 		// '1.0.0-alpha_beta',
 		'-alpha.',
-		// '1.0.0-alpha..',
-		// '1.0.0-alpha..1',
-		// '1.0.0-alpha...1',
-		// '1.0.0-alpha....1',
-		// '1.0.0-alpha.....1',
-		// '1.0.0-alpha......1',
-		// '1.0.0-alpha.......1',
+		'1.0.0-alpha..',
+		'1.0.0-alpha..1',
+		'1.0.0-alpha...1',
+		'1.0.0-alpha....1',
+		'1.0.0-alpha.....1',
+		'1.0.0-alpha......1',
+		'1.0.0-alpha.......1',
 		'01.1.1',
 		'1.01.1',
 		'1.1.01',
@@ -83,6 +91,8 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 
 	for (const string of invalidStrings) {
 		t.notRegex(string, semverRegex());
+		console.log(string.match(semverRegex()))
+		t.true(semver.valid(string) === null)
 	}
 });
 
@@ -96,6 +106,7 @@ test('#18, allow 0 as numeric identifier', t => {
 		'1.2.3-alpha.10.0+build.unicorn.rainbow'
 	]) {
 		t.regex(string, semverRegex());
+		t.true(semver.valid(string) !== null)
 	}
 });
 
