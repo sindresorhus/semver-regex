@@ -14,7 +14,41 @@ const fixtures = [
 	'2.7.2-foo+bar',
 	'1.2.3-alpha.10.beta',
 	'1.2.3-alpha.10.beta+build.unicorn.rainbow',
-	'99999.99999.99999'
+	'99999.99999.99999',
+
+	// Pulled from https://regex101.com/r/vkijKf/1/
+	'0.0.4',
+	'1.2.3',
+	'10.20.30',
+	'1.1.2-prerelease+meta',
+	'1.1.2+meta',
+	'1.1.2+meta-valid',
+	'1.0.0-alpha',
+	'1.0.0-beta',
+	'1.0.0-alpha.beta',
+	'1.0.0-alpha.beta.1',
+	'1.0.0-alpha.1',
+	'1.0.0-alpha0.valid',
+	'1.0.0-alpha.va1id',
+	'1.0.0-alpha.0valid',
+	'1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay',
+	'1.0.0-rc.1+build.1',
+	'2.0.0-rc.1+build.123',
+	'1.2.3-beta',
+	'10.2.3-DEV-SNAPSHOT',
+	'1.2.3-SNAPSHOT-123',
+	'1.0.0',
+	'2.0.0',
+	'1.1.7',
+	'2.0.0+build.1848',
+	'2.0.1-alpha.1227',
+	'1.0.0-alpha+beta',
+	'1.2.3----RC-SNAPSHOT.12.9.1--.12+788',
+	'1.2.3----R-S.12.9.1--.12+meta',
+	'1.2.3----RC-SNAPSHOT.12.9.1--.12',
+	'1.0.0+0.build.1-rc.10000aaa-kk-0.1',
+	// '99999999999999999999999.999999999999999999.99999999999999999', // Too long
+	'1.0.0-0A.is.legal'
 ];
 
 test('matches semver versions on test', t => {
@@ -85,7 +119,8 @@ test('#14, does not match sub-strings of longer semver-similar strings, respect 
 		'+justmeta',
 		'9.8.7+meta+meta',
 		'9.8.7-whatever+meta+meta',
-		'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12'
+		'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12',
+		'1.0.0-beta@beta'
 	];
 
 	for (const string of invalidStrings) {
