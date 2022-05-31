@@ -2,7 +2,7 @@ import test from 'ava';
 import semver from 'semver';
 import semverRegexAsDefault, {semverRegex} from './index.js';
 
-const fixtures = [
+const validStrings = [
 	'0.0.0',
 	'0.10.0',
 	'v1.0.0',
@@ -51,8 +51,52 @@ const fixtures = [
 	'1.0.0-0A.is.legal',
 ];
 
+const invalidStrings = [
+	'1',
+	'1.2',
+	'1.2.3-0123',
+	'1.2.3-0123.0123',
+	'1.1.2+.123',
+	'+invalid',
+	'-invalid',
+	'-invalid+invalid',
+	'-invalid.01',
+	'alpha',
+	'alpha.beta',
+	'alpha.beta.1',
+	'alpha.1',
+	'alpha+beta',
+	'alpha_beta',
+	'alpha.',
+	'alpha..',
+	'beta',
+	'1.0.0-alpha_beta',
+	'-alpha.',
+	'1.0.0-alpha..',
+	'1.0.0-alpha..1',
+	'1.0.0-alpha...1',
+	'1.0.0-alpha....1',
+	'1.0.0-alpha.....1',
+	'1.0.0-alpha......1',
+	'1.0.0-alpha.......1',
+	'01.1.1',
+	'1.01.1',
+	'1.1.01',
+	'1.2',
+	'1.2.3.DEV',
+	'1.2-SNAPSHOT',
+	'1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788',
+	'1.2-RC-SNAPSHOT',
+	'-1.0.3-gamma+b7718',
+	'+justmeta',
+	'9.8.7+meta+meta',
+	'9.8.7-whatever+meta+meta',
+	'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12',
+	'1.0.0-beta@beta',
+];
+
 test('matches semver versions on test', t => {
-	for (const fixture of fixtures) {
+	for (const fixture of validStrings) {
 		t.regex(fixture, semverRegex());
 		t.true(semver.valid(fixture) !== null);
 
@@ -79,50 +123,6 @@ test('#7, does not return tag prefix', t => {
 });
 
 test('#14, does not match sub-strings of longer semver-similar strings, respect semver@2.0.0 clause 9', t => {
-	const invalidStrings = [
-		'1',
-		'1.2',
-		'1.2.3-0123',
-		'1.2.3-0123.0123',
-		'1.1.2+.123',
-		'+invalid',
-		'-invalid',
-		'-invalid+invalid',
-		'-invalid.01',
-		'alpha',
-		'alpha.beta',
-		'alpha.beta.1',
-		'alpha.1',
-		'alpha+beta',
-		'alpha_beta',
-		'alpha.',
-		'alpha..',
-		'beta',
-		'1.0.0-alpha_beta',
-		'-alpha.',
-		'1.0.0-alpha..',
-		'1.0.0-alpha..1',
-		'1.0.0-alpha...1',
-		'1.0.0-alpha....1',
-		'1.0.0-alpha.....1',
-		'1.0.0-alpha......1',
-		'1.0.0-alpha.......1',
-		'01.1.1',
-		'1.01.1',
-		'1.1.01',
-		'1.2',
-		'1.2.3.DEV',
-		'1.2-SNAPSHOT',
-		'1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788',
-		'1.2-RC-SNAPSHOT',
-		'-1.0.3-gamma+b7718',
-		'+justmeta',
-		'9.8.7+meta+meta',
-		'9.8.7-whatever+meta+meta',
-		'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12',
-		'1.0.0-beta@beta',
-	];
-
 	for (const string of invalidStrings) {
 		t.notRegex(string, semverRegex());
 		t.true(semver.valid(string) === null);
@@ -184,6 +184,38 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		for (const fixture of fixtures) {
 			semverRegex().test(fixture);
 		}
+
+		const difference = Date.now() - start;
+		t.true(difference < 20, `Execution time: ${difference}`);
+	}
+
+	for (let index = 1; index <= 200; index++) {
+		const start = Date.now();
+		const shuffle = array => array.sort(() => Math.random() - 0.5);
+		// Adapted from https://gist.github.com/6174/6062387
+		const rndstr = (() => {
+			const gen = (min, max) => max++ && Array.from({length: max - min}).map((s, i) => String.fromCodePoint(min + i));
+			const sets = {
+				num: gen(48, 57),
+				alphaLower: gen(97, 122),
+				alphaUpper: gen(65, 90),
+				special: [...'~!@#$%^&*()_+-=[]{}|;:\'",./<>?'],
+			};
+			function * iter(length, set) {
+				if (set.length === 0) {
+					set = Object.values(sets).flat();
+				}
+				for (let i = 0; i < length; i++) {
+					yield set[Math.trunc(Math.random() * set.length)];
+				}
+			}
+
+			return Object.assign(((length, ...set) => [...iter(length, set.flat())].join('')), sets);
+		})();
+		const fuzz = Array.from({length: 100}).map(() => rndstr(100 * Math.random(), rndstr.alphaUpper, rndstr.special, rndstr.alphaLower, rndstr.num));
+		const fixture = shuffle(Array.from({length: index}).map(() => [validStrings, invalidStrings, fuzz]).flat(2)).join(' ');
+
+		semverRegex().test(fixture);
 
 		const difference = Date.now() - start;
 		t.true(difference < 20, `Execution time: ${difference}`);
