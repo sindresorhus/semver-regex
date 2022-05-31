@@ -205,6 +205,7 @@ test('invalid version does not cause catatrophic backtracking', t => {
 				if (set.length === 0) {
 					set = Object.values(sets).flat();
 				}
+
 				for (let i = 0; i < length; i++) {
 					yield set[Math.trunc(Math.random() * set.length)];
 				}
