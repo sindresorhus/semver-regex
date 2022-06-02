@@ -219,7 +219,7 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		semverRegex().test(fixture);
 
 		const difference = Date.now() - start;
-		t.true(difference < 20, `Execution time: ${difference}`);
+		t.true(difference < 25, `Execution time: ${difference}`);
 	}
 });
 
