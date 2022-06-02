@@ -189,7 +189,7 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		t.true(difference < 20, `Execution time: ${difference}`);
 	}
 
-	for (let index = 1; index <= 200; index++) {
+	for (let index = 1; index <= 100; index++) {
 		const start = Date.now();
 		const shuffle = array => array.sort(() => Math.random() - 0.5);
 		// Adapted from https://gist.github.com/6174/6062387
