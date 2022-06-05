@@ -1,24 +1,108 @@
 import test from 'ava';
+import semver from 'semver';
 import semverRegex from './index.js';
 
-const fixtures = [
+const validStrings = [
 	'0.0.0',
 	'0.10.0',
 	'v1.0.0',
 	'0.0.0-foo',
+	'0.0.0-foo-bar-baz',
 	'1.2.3-4',
 	'2.7.2+asdf',
 	'1.2.3-a.b.c.10.d.5',
 	'2.7.2-foo+bar',
 	'1.2.3-alpha.10.beta',
 	'1.2.3-alpha.10.beta+build.unicorn.rainbow',
-	'foo 0.0.0 bar 0.0.0',
-	'99999.99999.99999'
+	'99999.99999.99999',
+
+	// Pulled from https://regex101.com/r/vkijKf/1/
+	'0.0.4',
+	'1.2.3',
+	'10.20.30',
+	'1.1.2-prerelease+meta',
+	'1.1.2+meta',
+	'1.1.2+meta-valid',
+	'1.0.0-alpha',
+	'1.0.0-beta',
+	'1.0.0-alpha.beta',
+	'1.0.0-alpha.beta.1',
+	'1.0.0-alpha.1',
+	'1.0.0-alpha0.valid',
+	'1.0.0-alpha.va1id',
+	'1.0.0-alpha.0valid',
+	'1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay',
+	'1.0.0-rc.1+build.1',
+	'2.0.0-rc.1+build.123',
+	'1.2.3-beta',
+	'10.2.3-DEV-SNAPSHOT',
+	'1.2.3-SNAPSHOT-123',
+	'1.0.0',
+	'2.0.0',
+	'1.1.7',
+	'2.0.0+build.1848',
+	'2.0.1-alpha.1227',
+	'1.0.0-alpha+beta',
+	'1.2.3----RC-SNAPSHOT.12.9.1--.12+788',
+	'1.2.3----R-S.12.9.1--.12+meta',
+	'1.2.3----RC-SNAPSHOT.12.9.1--.12',
+	'1.0.0+0.build.1-rc.10000aaa-kk-0.1',
+	// '99999999999999999999999.999999999999999999.99999999999999999', // Too long
+	'1.0.0-0A.is.legal',
+];
+
+const invalidStrings = [
+	'1',
+	'1.2',
+	'1.2.3-0123',
+	'1.2.3-0123.0123',
+	'1.1.2+.123',
+	'+invalid',
+	'-invalid',
+	'-invalid+invalid',
+	'-invalid.01',
+	'alpha',
+	'alpha.beta',
+	'alpha.beta.1',
+	'alpha.1',
+	'alpha+beta',
+	'alpha_beta',
+	'alpha.',
+	'alpha..',
+	'beta',
+	'1.0.0-alpha_beta',
+	'-alpha.',
+	'1.0.0-alpha..',
+	'1.0.0-alpha..1',
+	'1.0.0-alpha...1',
+	'1.0.0-alpha....1',
+	'1.0.0-alpha.....1',
+	'1.0.0-alpha......1',
+	'1.0.0-alpha.......1',
+	'01.1.1',
+	'1.01.1',
+	'1.1.01',
+	'1.2',
+	'1.2.3.DEV',
+	'1.2-SNAPSHOT',
+	'1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788',
+	'1.2-RC-SNAPSHOT',
+	'-1.0.3-gamma+b7718',
+	'+justmeta',
+	'9.8.7+meta+meta',
+	'9.8.7-whatever+meta+meta',
+	'99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12',
+	'1.0.0-beta@beta',
 ];
 
 test('matches semver versions on test', t => {
-	for (const fixture of fixtures) {
+	for (const fixture of validStrings) {
 		t.regex(fixture, semverRegex());
+		t.true(semver.valid(fixture) !== null);
+
+		if (!fixture.startsWith('v')) { // Should we trim v prefix?
+			t.deepEqual(fixture.match(semverRegex()), [fixture]);
+		}
 	}
 
 	t.notRegex('0.88', semverRegex());
@@ -30,6 +114,8 @@ test('matches semver versions on test', t => {
 test('returns semver on match', t => {
 	t.deepEqual('0.0.0'.match(semverRegex()), ['0.0.0']);
 	t.deepEqual('foo 0.0.0 bar 0.1.1'.match(semverRegex()), ['0.0.0', '0.1.1']);
+	t.deepEqual('1.2.3-alpha.10.beta'.match(semverRegex()), ['1.2.3-alpha.10.beta']);
+	t.deepEqual('0.0.0-foo-bar alpha.beta.1 1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788 1.0.0-alpha+beta 1.2.3----RC-SNAPSHOT.12.9.1--.12+788 1.2 1.2.3-4'.match(semverRegex()), ['0.0.0-foo-bar', '1.0.0-alpha+beta', '1.2.3----RC-SNAPSHOT.12.9.1--.12+788', '1.2.3-4']);
 });
 
 test('#7, does not return tag prefix', t => {
@@ -37,52 +123,9 @@ test('#7, does not return tag prefix', t => {
 });
 
 test('#14, does not match sub-strings of longer semver-similar strings, respect semver@2.0.0 clause 9', t => {
-	// TODO: Some of these are disabled as we need to improve the regex.
-	const invalidStrings = [
-		'1',
-		'1.2',
-		// '1.2.3-0123',
-		// '1.2.3-0123.0123',
-		// '1.1.2+.123',
-		'+invalid',
-		'-invalid',
-		'-invalid+invalid',
-		'-invalid.01',
-		'alpha',
-		'alpha.beta',
-		'alpha.beta.1',
-		'alpha.1',
-		'alpha+beta',
-		'alpha_beta',
-		'alpha.',
-		'alpha..',
-		'beta',
-		// '1.0.0-alpha_beta',
-		'-alpha.',
-		// '1.0.0-alpha..',
-		// '1.0.0-alpha..1',
-		// '1.0.0-alpha...1',
-		// '1.0.0-alpha....1',
-		// '1.0.0-alpha.....1',
-		// '1.0.0-alpha......1',
-		// '1.0.0-alpha.......1',
-		'01.1.1',
-		'1.01.1',
-		'1.1.01',
-		'1.2',
-		// '1.2.3.DEV',
-		'1.2-SNAPSHOT',
-		// '1.2.31.2.3----RC-SNAPSHOT.12.09.1--..12+788',
-		'1.2-RC-SNAPSHOT',
-		'-1.0.3-gamma+b7718',
-		'+justmeta'
-		// '9.8.7+meta+meta',
-		// '9.8.7-whatever+meta+meta',
-		// '99999999999999999999999.999999999999999999.99999999999999999----RC-SNAPSHOT.12.09.1--------------------------------..12'
-	];
-
 	for (const string of invalidStrings) {
 		t.notRegex(string, semverRegex());
+		t.true(semver.valid(string) === null);
 	}
 });
 
@@ -93,9 +136,10 @@ test('#18, allow 0 as numeric identifier', t => {
 		'1.2.0-alpha.10.beta+build.unicorn.rainbow',
 		'1.2.3-0.10.beta+build.unicorn.rainbow',
 		'1.2.3-alpha.0.beta+build.unicorn.rainbow',
-		'1.2.3-alpha.10.0+build.unicorn.rainbow'
+		'1.2.3-alpha.10.0+build.unicorn.rainbow',
 	]) {
 		t.regex(string, semverRegex());
+		t.true(semver.valid(string) !== null);
 	}
 });
 
@@ -103,16 +147,16 @@ test('#18, allow 0 as numeric identifier', t => {
 test('invalid version does not cause catatrophic backtracking', t => {
 	t.regex(
 		'v1.1.3-0aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$',
-		semverRegex()
+		semverRegex(),
 	);
 
-	const postfix = '.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'.repeat(99999);
+	const postfix = '.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'.repeat(99_999);
 	t.regex(
 		`v1.1.3-0aa${postfix}$`,
-		semverRegex()
+		semverRegex(),
 	);
 
-	for (let index = 1; index <= 50000; index++) {
+	for (let index = 1; index <= 50_000; index++) {
 		const start = Date.now();
 		const fixture = `0.0.0-0${'.-------'.repeat(index)}@`;
 		semverRegex().test(fixture);
@@ -126,5 +170,55 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		semverRegex().test(fixture);
 		const difference = Date.now() - start;
 		t.true(difference < 20, `Execution time: ${difference}`);
+	}
+
+	for (let index = 1; index <= 30; index++) {
+		// Attack string generated by https://devina.io/redos-checker
+		const start = Date.now();
+		const fixtures = [
+			'0.0.1-i' + '--i-'.repeat(index) + '\u0000',
+			'0' + ' 0.1.0-i0'.repeat(index) + '.1.1+1' + '1'.repeat(index) + 'A',
+			'1.0.1--' + '-'.repeat(index) + '\u0000',
+			'g' + ' 0.0.1-i+'.repeat(index) + 'a' + 'v0'.repeat(index) + '\u0000',
+		];
+		for (const fixture of fixtures) {
+			semverRegex().test(fixture);
+		}
+
+		const difference = Date.now() - start;
+		t.true(difference < 20, `Execution time: ${difference}`);
+	}
+
+	for (let index = 1; index <= 100; index++) {
+		const start = Date.now();
+		const shuffle = array => array.sort(() => Math.random() - 0.5);
+		// Adapted from https://gist.github.com/6174/6062387
+		const rndstr = (() => {
+			const gen = (min, max) => max++ && Array.from({length: max - min}).map((s, i) => String.fromCodePoint(min + i));
+			const sets = {
+				num: gen(48, 57),
+				alphaLower: gen(97, 122),
+				alphaUpper: gen(65, 90),
+				special: [...'~!@#$%^&*()_+-=[]{}|;:\'",./<>?'],
+			};
+			function * iter(length, set) {
+				if (set.length === 0) {
+					set = Object.values(sets).flat();
+				}
+
+				for (let i = 0; i < length; i++) {
+					yield set[Math.trunc(Math.random() * set.length)];
+				}
+			}
+
+			return Object.assign(((length, ...set) => [...iter(length, set.flat())].join('')), sets);
+		})();
+		const fuzz = Array.from({length: 100}).map(() => rndstr(100 * Math.random(), rndstr.alphaUpper, rndstr.special, rndstr.alphaLower, rndstr.num));
+		const fixture = shuffle(Array.from({length: index}).map(() => [validStrings, invalidStrings, fuzz]).flat(2)).join(' ');
+
+		semverRegex().test(fixture);
+
+		const difference = Date.now() - start;
+		t.true(difference < 50, `Execution time: ${difference}`);
 	}
 });
