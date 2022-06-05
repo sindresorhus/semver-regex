@@ -4,8 +4,8 @@
 
 ## Install
 
-```
-$ npm install semver-regex
+```sh
+npm install semver-regex
 ```
 
 ## Usage
@@ -26,7 +26,9 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 //=> ['1.0.0', '2.1.3']
 ```
 
-**Note:** For versions coming from user-input, you are recommended to truncate the string to a sensible length to prevent abuse. For example, 100 length.
+## Important
+
+If you run the regex against untrusted user input, it's recommended to truncate the string to a sensible length (for example, 100). And if you use this in a server context, you should also [give it a timeout](https://github.com/sindresorhus/super-regex).
 
 ## Related
 

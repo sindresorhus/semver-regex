@@ -192,28 +192,33 @@ test('invalid version does not cause catatrophic backtracking', t => {
 	for (let index = 1; index <= 100; index++) {
 		const start = Date.now();
 		const shuffle = array => array.sort(() => Math.random() - 0.5);
+
 		// Adapted from https://gist.github.com/6174/6062387
-		const rndstr = (() => {
+		const randomString = (() => {
 			const gen = (min, max) => max++ && Array.from({length: max - min}).map((s, i) => String.fromCodePoint(min + i));
+
 			const sets = {
 				num: gen(48, 57),
 				alphaLower: gen(97, 122),
 				alphaUpper: gen(65, 90),
 				special: [...'~!@#$%^&*()_+-=[]{}|;:\'",./<>?'],
 			};
+
 			function * iter(length, set) {
 				if (set.length === 0) {
 					set = Object.values(sets).flat();
 				}
 
-				for (let i = 0; i < length; i++) {
+				for (let index = 0; index < length; index++) {
 					yield set[Math.trunc(Math.random() * set.length)];
 				}
 			}
 
 			return Object.assign(((length, ...set) => [...iter(length, set.flat())].join('')), sets);
 		})();
-		const fuzz = Array.from({length: 100}).map(() => rndstr(100 * Math.random(), rndstr.alphaUpper, rndstr.special, rndstr.alphaLower, rndstr.num));
+
+		const fuzz = Array.from({length: 100}).map(() => randomString(100 * Math.random(), randomString.alphaUpper, randomString.special, randomString.alphaLower, randomString.num));
+
 		const fixture = shuffle(Array.from({length: index}).map(() => [validStrings, invalidStrings, fuzz]).flat(2)).join(' ');
 
 		semverRegex().test(fixture);

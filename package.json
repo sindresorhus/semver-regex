@@ -33,7 +33,7 @@
 		"semantic"
 	],
 	"devDependencies": {
-		"ava": "^4.2.0",
+		"ava": "^4.3.0",
 		"tsd": "^0.20.0",
 		"xo": "^0.49.0",
 		"semver": "^7.3.7"
