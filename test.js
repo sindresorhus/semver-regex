@@ -1,6 +1,6 @@
 import test from 'ava';
 import semver from 'semver';
-import semverRegexAsDefault, {semverRegex} from './index.js';
+import semverRegex from './index.js';
 
 const validStrings = [
 	'0.0.0',
@@ -221,8 +221,4 @@ test('invalid version does not cause catatrophic backtracking', t => {
 		const difference = Date.now() - start;
 		t.true(difference < 50, `Execution time: ${difference}`);
 	}
-});
-
-test('default export refers to semverRegex', t => {
-	t.is(semverRegexAsDefault, semverRegex);
 });
