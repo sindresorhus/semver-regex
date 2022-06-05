@@ -19,5 +19,3 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 ```
 */
 export default function semverRegex(): RegExp;
-
-export function semverRegex(): RegExp;
