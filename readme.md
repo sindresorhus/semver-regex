@@ -28,7 +28,9 @@ semverRegex().exec('unicorn 1.0.0 rainbow')[0];
 
 ## Important
 
-If you run the regex against untrusted user input, it's recommended to truncate the string to a sensible length (for example, 100). And if you use this in a server context, you should also [give it a timeout](https://github.com/sindresorhus/super-regex).
+If you run the regex against untrusted user input, it's recommended to truncate the string to a sensible length (for example, 50). And if you use this in a server context, you should also [give it a timeout](https://github.com/sindresorhus/super-regex).
+
+**I do not consider ReDoS a valid vulnerability for this package. It's simply not possible to make it fully ReDoS safe. It's up to the user to set a timeout for the regex if they accept untrusted user input.** However, I'm happy to accept pull requests to improve the regex.
 
 ## Related
 
